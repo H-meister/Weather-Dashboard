@@ -1,24 +1,70 @@
-// get text from city text input and make a fetch request.
+var CityFormEl 
+var cityButtonsEl 
+var cityInputEl
+var repoContainerEl 
+var repoSearchTerm
 
-// in that fetch request get specific data to the city that was entered.
+let APIkey = '11659c4227080b90af32d4018c636256'
 
-// Needs to get current and future conditions for the city. Add the city also to the search history.
+var formSubmitHandler = function(event) {
+	//prevent page form refereshing
+	event.preventDefault();
 
-//view current weather conditions for the city then presented with CITY NAME, THE DATE, AN ICON REPRESENTATION OF THE WEATHER CONDITIONS
-//THE TEMPERATURE, THE HUMIDITY, THE WIND SPEED, AND THE UV INDEX
+	//gert value from the input 
+	var cityName = cityInputEl.value.trim();
 
-//add COLOR to see if it is favorable, Moderate, or Severe.
+	if (cityName) {
+		//get city info
+		
+		//clear old content
+		repoContainerEl.textContent = "";
+		cityInputEl.value ="";
+	} else {
+		alert("Please Enter A City")
+	}
+};
 
-var getUserRepos = function(user) {
-	// format the github api url
-	var apiUrl = "https://api.github.com/users/" + user + "/repos";
-  
-	// make a request to the url
-	fetch(apiUrl).then(function(response) {
-	  response.json().then(function(data) {
-		console.log(data);
-	  });
+var buttonClickHandler = function(event) {
+	var city = event.target.getAttribute("data-city");
+
+	if (city) {
+		//get all forcast
+
+		//clear entries
+		repoContainerEl.textContent = "";
+	}
+};
+
+var getCityRepo = function(city) {
+	//format city url 
+	var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=imperial&appid=" + APIkey;  	
+
+	//make a get request tot url 
+	fetch(apiUrl)
+	.then(function(response) {
+		//request was successful
+		if (response.ok) {
+			console.log(response);
+			response.json().then(function (data) {
+				console.log(data);
+				displayRepos(data, city)
+			})
+		} else {
+			alert ('error')
+		}
+	})
+	.catch(function(error) {		
+		alert("Unable to connect to server");
 	});
-  };
+};
 
-  getUserRepos();
+var displayRepos = function(repos, searchTerm) {
+	/// check if api returned any repos
+	if(repos.length === 0) {
+		repoContainerEl.textContent = "no repositories found.";
+		return;
+	}
+
+	repoSearchTerm.textontent = searchTerm;
+
+}
